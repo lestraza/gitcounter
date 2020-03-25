@@ -1,77 +1,29 @@
 import React, { Component } from 'react';
+import { inject, observer } from 'mobx-react';
+import { action } from 'mobx';
 
 
-export default class Table extends Component {
-
-    state = {
-        renderFiles: [...this.props.files],
-        sortField: '',
-        filterName: ''    
-    }
+@inject('store') @observer
+class Table extends Component {
+    mainStore = this.props.store       
         
-    sortData = (prop) => {         
-        const { renderFiles, sortField } = this.state     
-        const sortedFiles = renderFiles.sort((a, b) => {
-            if(a[prop] > b[prop]) {
-                return 1
-            }
-            if(a[prop] < b[prop]) {
-                return -1
-            }    
-        })
-        if(sortField !== prop) {
-            this.setState({
-                renderFiles: [...sortedFiles],
-                sortField: prop
-            })
-        } else {
-            const reversedFiles = sortedFiles.reverse()
-            this.setState({
-                renderFiles: [...reversedFiles],
-                sortField: ''
-            })
-        }
+    @action    
+    onClickSortData(prop) {
+        const { sortData } = this.mainStore
+        sortData(prop)
     }
 
-    filterData = (event) => {
-        this.setState({
-            filterName: event.target.value
-        }, () => {
-            if(this.state.filterName) {
-                const filteredData = this.props.files.filter( file => {
-                return file.fileName.includes(this.state.filterName)
-            })
-            this.setState({
-                renderFiles: [...filteredData]
-            })
-            } else {
-                this.setState({
-                    renderFiles: [...this.props.files]
-                })
-            }  
-        }) 
-    }
-
-    render() {
-        const { renderFiles, filterName } = this.state
+    render() {        
+        const { renderFiles } = this.mainStore        
         return (
             <table className="table" border="1">
                 <tbody>
                     <tr className='titles'>
-                        <th className="table__file_name title" onClick={() => this.sortData('fileName')}>Имя файла</th>
-                        <th className="table__row_amount title" onClick={() => this.sortData('amountLines')}>Всего строк</th>
-                        <th className="table__code title" onClick={() => this.sortData('amountCodeLines')}>Код</th>
-                        <th className="table__comment title" onClick={() => this.sortData('amountComments')}>Комментарии</th>
-                        <th className="table__empty title" onClick={() => this.sortData('amountEmptyLines')}>Пустые</th>
-                    </tr>
-                    <tr className='filters_container'>
-                        <th className="table__file_name title" onChange={this.filterData}>
-                            <input placeholder="Enter a file's name" className='filter' defaultValue={filterName}/>
-                            </th>
-                        <th className="table__row_amount title" ></th>
-                        <th className="table__code title" ></th>
-                        <th className="table__comment title" ></th>
-                        <th className="table__empty title" ></th>
+                        <th className="table__file_name title" onClick={() => this.onClickSortData('fileName')}>Имя файла</th>
+                        <th className="table__row_amount title" onClick={() => this.onClickSortData('amountLines')}>Всего строк</th>
+                        <th className="table__code title" onClick={() => this.onClickSortData('amountCodeLines')}>Код</th>
+                        <th className="table__comment title" onClick={() => this.onClickSortData('amountComments')}>Комментарии</th>
+                        <th className="table__empty title" onClick={() => this.onClickSortData('amountEmptyLines')}>Пустые</th>
                     </tr>
 
                     {renderFiles.length > 0 && (
@@ -92,3 +44,5 @@ export default class Table extends Component {
         )
     }
 }
+
+export default Table

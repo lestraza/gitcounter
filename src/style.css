@@ -42,14 +42,14 @@ tr{
     border-color: inherit;
      
 }
-.filters_container {
-    height: 30px;
+.filter__container {
+    margin: 30px auto;
 }
 .filter {
     display: inline-block;
     height: 30px;
     border: none;
-    min-width: 150px;
+    min-width: 500px;
 }
 th {
     font-weight: bold;
